@@ -15,11 +15,13 @@ function lookup<T>(x: string, env: Environment<T>): T | undefined {
 function isDefined<T>(x: string, env: Environment<T>): boolean {
   // 1. Return a Boolean value that represents whether an environment specified in parameter `x` has a variable specified in the parameter `x`.
   // TODO: YOUR CODE HERE // Hint: You can find which methods to use at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+  return env.env.has(x);
 }
 
-function declare<T>(x: string, v: T, env: Environment<T>): void {
+function declare<T>(x: string, v: T, env: Environment<T>): Map<string, T> {
   // 1. Add a variable represented by the parameter `x` into the environment represented by the parameters `env`.
   // TODO: YOUR CODE HERE // Hint: You can find which methods to use at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+  return env.env.set(x, v)
 }
 
 export function newEnv<T>(): Environment<T> {

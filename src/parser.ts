@@ -38,6 +38,7 @@ export function parseProgram(tokens: Token[]): AstNode[] {
   function advance(): void {
     // 1. Increment the value of `currentPosition` by 1.
     // TODO: YOUR CODE HERE
+
   }
 
   function peek() {
@@ -57,8 +58,6 @@ export function parseProgram(tokens: Token[]): AstNode[] {
   
   
   /*** functions for terminal symbols of the grammar ***/
-
-  
   
   function KeywordLet(): void {
     // 1. Peek the next input token.
@@ -77,36 +76,50 @@ export function parseProgram(tokens: Token[]): AstNode[] {
     // 1.1.1. Advance the position of the parser.
     // 1.2. Otherwise, i.e., if it is not an equality sign, report an error. 
 
-    // TODO: YOUR CODE HERE
+    if (peek().kind === "Equals") {
+      advance();
+    }
+    else throw error();
   }
 
   function Semicolon(): void {
-    // TODO: YOUR CODE HERE
+    if (peek().kind == "Separator") {
+      advance();
+    }
+    else throw error();
   }
 
-  function /* TODO: YOUR CODE HERE */(): void {
-    // TODO: YOUR CODE HERE
+  function OpeningBracket(): void {
+    if (peek().kind === "OpeningBracket") {
+      advance();
+    }
+    else throw error();
   }
 
-  function /* TODO: YOUR CODE HERE */(): void {
-    // TODO: YOUR CODE HERE
+  function ClosingBracket(): void { 
+    if (peek().kind === "ClosingBracket") {
+      advance();
+    }
+    else throw error();
   }
-
 
   
   /*** functions for "special" terminal symbols that also have a value (these special terminals are: `NumericalLiteral`, `Identifier` and `PhysicalUnit`) ***/
-
-
   
   function NumericalLiteral(): number {
     // 1. Peek the next input token.
     // 1.1. If it is a numeric literal, then:
     // 1.1.1. Advance the position of the parser.
     // 1.2. Otherwise, i.e., if it is not a numeric literal, report an error.
-    // TODO: YOUR CODE HERE
+    if (peek().kind === "Number") {
+      advance();
+    }
+    else throw error();
     
     // 2. Return the numerical value of the token.
-    return parseInt(/* TODO: YOUR CODE HERE */, 10);
+    let num = getCurrentToken();
+    let numValue = num.value;
+    return parseInt(numValue, 10);
   }
   
   function Identifier(): Identifier {
@@ -118,7 +131,7 @@ export function parseProgram(tokens: Token[]): AstNode[] {
       // 2.2. Return an object with two properties: `name` and `nodeType`.
       return {
         // 2.2.1. The property `name` should be the value of the current token.
-        // TODO: YOUR CODE HERE
+        name: getCurrentToken().value, 
         // 2.2.2. The property `nodeType` should be `Identifier`.
         nodeType: "Identifier"
       };
@@ -142,30 +155,40 @@ export function parseProgram(tokens: Token[]): AstNode[] {
         // 3.1.2.1. Return an object with the following properties:
         return {
           // 3.1.2.1.1. Property `value` should be the value of the token, casted to type `Time`
-          // TODO: YOUR CODE HERE
+          value: <Time>unitValue,
           // 3.1.2.1.2. Property `kind` should be `PhysicalUnitEnum.Time`
-          // TODO: YOUR CODE HERE
+          kind: PhysicalUnitEnum.Time,
           // 3.1.2.1.3. Property `nodeType` should be `PhysicalUnit`
-          // TODO: YOUR CODE HERE
-        };
+          nodeType: "PhysicalUnit"
+        }; 
       // 3.1.3. Otherwise, if that value is one of the mass units, then:
-      } else if (/* TODO: YOUR CODE HERE */) {
+      } else if (["g", "kg"].includes(unitValue)) {
         // 3.1.3.1. Return an object with the following properties:
         // 3.1.3.1.1. Property `value` should be the value of the token, casted to type `Mass`
         // 3.1.3.1.2. Property `kind` should be `PhysicalUnitEnum.Mass`
         // 3.1.3.1.3. Property `nodeType` should be `PhysicalUnit`
 
-        // TODO: YOUR CODE HERE
-        };
-      // 3.1.4. Otherwise, if that value is one of the (???what???) units, then:
-      } else if (/* TODO: YOUR CODE HERE */) {
-        // TODO: YOUR CODE HERE
+        return {
+          value: <Mass>unitValue,
+          kind: PhysicalUnitEnum.Mass,
+          nodeType: "PhysicalUnit"
+        }
+
+      // 3.1.4. Otherwise, if that value is one of the distance units, then:
+      } else if (["m", "km"].includes(unitValue)) {
+        return {
+          value: <Distance>unitValue,
+          kind: PhysicalUnitEnum.Distance,
+          nodeType: "PhysicalUnit"
+        }
       } 
-      // 3.1.5. Otherwise, if that value is one of the (???what???) units, then:
-      else if (
-        // TODO: YOUR CODE HERE
-      ) {
-        // TODO: YOUR CODE HERE
+      // 3.1.5. Otherwise, if that value is one of the velocity units, then:
+      else if (["m/s", "m/min", "m/h", "km/s", "km/min", "km/h"].includes(unitValue)) {
+        return {
+          value: <Velocity>unitValue,
+          kind: PhysicalUnitEnum.Velocity,
+          nodeType: "PhysicalUnit"
+        }
       }
     }
     // 3.2. Otherwise, i.e., if the kind of the token is not `PhysicalUnit`, throw an error.
@@ -173,10 +196,7 @@ export function parseProgram(tokens: Token[]): AstNode[] {
   }
 
 
-
   /*** functions for non-terminal symbols of the grammar ***/
-
-
   
   function Statement(): Statement {
     // 1.1. A statement is an assignment statement.
@@ -191,27 +211,38 @@ export function parseProgram(tokens: Token[]): AstNode[] {
     let assignee = Identifier();
     // 3. Expect an equality symbol `=`.
     // TODO: YOUR CODE HERE
+    Equals();
     // 4. Expect an expression, and store it in a variable.
     // TODO: YOUR CODE HERE
+    let expr = Expr();
     // 5. Expect a semicolon.
     // TODO: YOUR CODE HERE
+    Semicolon();
     // 6. Return an AST node that represents an assignment statement -- it is an object with:
     return {
       // 6.1. A property that represents the assignee (i.e., the variable that has been assigned to).
       assignee,
       // 6.2. A property that represents the expression on the right-hand side of the assignment statement.
-      // TODO: YOUR CODE HERE
-      // 6.3. A property `nodeType` which is (???what???).
-      // TODO: YOUR CODE HERE
+      expr,
+      // 6.3. A property `nodeType` which is 'AssignmentStatement'.
+      nodeType: "AssignmentStatement"
     };
   }
 
   function Expr(): Expr {
     // TODO: YOUR CODE HERE
+    return Additive();
   }
 
   function GroupExpr(): GroupExpr {
-    // TODO: YOUR CODE HERE
+    OpeningBracket();
+    let subExpr = Expr();
+    ClosingBracket();
+
+    return {
+      subExpr,
+      nodeType: "GroupExpr"
+    }
   }
 
   function PrimitiveExpr(): PrimitiveExpr {
@@ -227,10 +258,10 @@ export function parseProgram(tokens: Token[]): AstNode[] {
       case "Number":
         // 2.2.1. Expect a measured number.
         // 2.2.2. Return an AST node that represents it.
-        // TODO: YOUR CODE HERE
-      // 2.3. If it is a (???what???):
-      case /* TODO: YOUR CODE HERE */:
-        // TODO: YOUR CODE HERE
+        return MeasuredNumber();
+      // 2.3. If it is a group expression:
+      case "GroupExpr": 
+        return GroupExpr();
       // 2.4. Otherwise, if it is none of the above:
       default:
         // 2.4.1. Throw an error.
@@ -239,7 +270,14 @@ export function parseProgram(tokens: Token[]): AstNode[] {
   }
 
   function MeasuredNumber(): MeasuredNumber {
-    // TODO: YOUR CODE HERE
+    let numericalValue = NumericalLiteral();
+    let unit = PhysicalUnit();
+    
+    return {
+      numericalValue,
+      unit,
+      nodeType: "MeasuredNumber"
+    }
   }
 
   function OpAddSub(): Operator {
@@ -247,7 +285,7 @@ export function parseProgram(tokens: Token[]): AstNode[] {
     // 1.1. If it is either `+` or `-`, then:
     if (peek().kind == "OpAddSub") {
       // 1.1.1. Advance the position of the parser.
-      // TODO: YOUR CODE HERE
+      advance();
     }
     // 1.2. Otherwise, i.e., if it is not `+` or `-`, report an error.
     else throw error();
@@ -264,7 +302,10 @@ export function parseProgram(tokens: Token[]): AstNode[] {
         };
       // 2.2. If it is `-`, then:
       case "-":
-        // TODO: YOUR CODE HERE
+        return {
+          value: "-",
+          nodeType: "OpAddSub"
+        }
       // 2.3. Otherwise, i.e., if it is neither `+` nor `-`:
       default:
         // 2.3.1. Throw an error.
@@ -273,7 +314,25 @@ export function parseProgram(tokens: Token[]): AstNode[] {
   }
 
   function OpMulDiv(): Operator {
-    // TODO: YOUR CODE HERE
+    if (peek().kind == "OpMulDiv") {
+      advance();
+    }
+    else throw error();
+
+    switch (getCurrentToken().value) {
+      case "*":
+        return {
+          value: "*",
+          nodeType: "OpMulDiv"
+        };
+      case "/":
+        return {
+          value: "*",
+          nodeType: "OpMulDiv"
+        }
+      default:
+        throw error();
+    }
   }
 
   function Additive(): PrimitiveExpr | Multiplicative | Additive {
@@ -285,17 +344,17 @@ export function parseProgram(tokens: Token[]): AstNode[] {
       // 3. Expect (i.e., consume) that peek'ed token, and store it in a variable.
       let op = OpAddSub();
       // 4. Expect a multiplicative expression, and store it in a variable.
-      let right = /* TODO: YOUR CODE HERE */;
+      let right = Multiplicative();
       // 5. Update the expression stored in item 1. to be an AST node that represents an additive expression -- it is an object with: 
       left = {
         // 5.1. A property that represents the left operand of the multiplicative expression.
         left,
         // 5.2. A property that represents the operator of the multiplicative expression.
-        // TODO: YOUR CODE HERE
+        op,
         // 5.3. A property that represents the right operator of the multiplicative expression.
         right,
-        // 5.4. A property `nodeType` which is (???what???).
-        nodeType: /* TODO: YOUR CODE HERE */,
+        // 5.4. A property `nodeType` which is 'Additive'.
+        nodeType: "Additive",
       };
     // 2.2. Make an iteration of the loop to process the possible remaining part of the multiplicative expression.
     }
@@ -304,7 +363,19 @@ export function parseProgram(tokens: Token[]): AstNode[] {
   }
 
   function Multiplicative(): Multiplicative | PrimitiveExpr {
-    // TODO: YOUR CODE HERE
+    let left: PrimitiveExpr | Multiplicative = PrimitiveExpr();
+
+    while (peek().kind === "OpMulDiv") {
+      let op = OpMulDiv();
+      let right = PrimitiveExpr();
+      left = {
+        left,
+        op,
+        right,
+        nodeType: "Multiplicative"
+      };
+    } 
+    return left;
   }
 
 }

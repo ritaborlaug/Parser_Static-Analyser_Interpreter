@@ -37,13 +37,14 @@ export function parseProgram(tokens: Token[]): AstNode[] {
 
   function advance(): void {
     // 1. Increment the value of `currentPosition` by 1.
-    // TODO: YOUR CODE HERE
+    currentPosition += 1;
 
   }
 
   function peek() {
     // 1. Return the element of array `tokens` at a position immediately after the current position.
     // TODO: YOUR CODE HERE
+    return tokens[currentPosition+1]
   }
 
   function error() {
@@ -260,7 +261,7 @@ export function parseProgram(tokens: Token[]): AstNode[] {
         // 2.2.2. Return an AST node that represents it.
         return MeasuredNumber();
       // 2.3. If it is a group expression:
-      case "GroupExpr": 
+      case "OpeningBracket": 
         return GroupExpr();
       // 2.4. Otherwise, if it is none of the above:
       default:

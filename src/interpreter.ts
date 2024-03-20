@@ -3,7 +3,7 @@ import { EvaluateVisitor, EvaluatedResult } from "./evaluateVisitor";
 import { parseProgram } from "./parser";
 import { Tokenizer } from "./tokenizer";
 import { TypeCheckVisitor } from "./typeCheckVisitor";
-import { PhysicalUnitEnum } from "./types";
+import { PhysicalUnitEnum, PhysicalUnitValues } from "./types";
 
 export function interpret(program: string): Environment<EvaluatedResult> {
   
@@ -24,18 +24,21 @@ export function interpret(program: string): Environment<EvaluatedResult> {
   // 4.3. For each statement in the AST: 
   for (let statement of parsed) {
     // 4.3.1. Visit it using the typechecking visitor.
-    // TODO: YOUR CODE HERE
+      typeCheckVisitor.visit(statement)
   }
 
   // 5. Evaluate the AST.
   // 5.1. Initialize a new environment that will store _values_ of variables.
-  // TODO: YOUR CODE HERE
+  let evaluateEnv = newEnv<EvaluatedResult>();
   // 5.2. Initialize an evaluating visitor.
-  // TODO: YOUR CODE HERE
+  let evaluateVisitor = new EvaluateVisitor(evaluateEnv);
   // 5.3. For each statement in the AST:
   // 5.3.1. Visit it using the evaluating visitor.
-  // TODO: YOUR CODE HERE
+  for (let statement of parsed) {
+    evaluateVisitor.visit(statement)
+
+  }
 
   // 6. Return the environment that stores the values of variables.
-  return /* TODO: YOUR CODE HERE */ ;
+  return evaluateEnv;
 }

@@ -22,28 +22,33 @@ export class TypeCheckVisitor implements AbstractVisitor {
       // 1.1. If it is a measured number, then:
       case "MeasuredNumber":
         // 1.1.1. Cast the node to type `MeasuredNumber`.
-        // TODO: YOUR CODE HERE
+        node = node as MeasuredNumber;
         // 1.1.2. Return the physical unit of the node.
         return node.unit.kind;
 
-      // 1.2. If it is a (???what???), then:
-      case /* TODO: YOUR CODE HERE */:
-        // TODO: YOUR CODE HERE
+      // 1.2. If it is a group expression, then:
+      case "GroupExpr":
+        node = node as GroupExpr;
+        return this.visit(node.subExpr)
+
 
       // 1.3. If it is an assignment statement, then:
       case "AssignmentStatement":
-        // TODO: YOUR CODE HERE
+        node = node as Assignment;
+        let expr = this.visit(node.expr);
+        this.env.declare(node.assignee.name, expr, this.env);
+        return expr;
 
       // 1.4. If it is an identifier, then:
       case "Identifier":
         // 1.4.1. Cast the node to type `Identifier`.
-        // TODO: YOUR CODE HERE
+        node = node as Identifier;
         // 1.4.2. Lookup the type (i.e., its physical unit) of the variable in the environment.
-        // TODO: YOUR CODE HERE
+        let fromEnv = this.env.lookup(node.name, this.env)
         // 1.4.3. If the looked up type is not undefined, then:
         if (fromEnv !== undefined) {
           // 1.4.3.1. Return the looked up type.
-          // TODO: YOUR CODE HERE
+          return fromEnv;
         } else {
           // 1.4.4. Otherwise, i.e., if the looked up type is undefined, then report an error.
           throw new Error("Variable " + node.name + " is not defined");
@@ -51,20 +56,33 @@ export class TypeCheckVisitor implements AbstractVisitor {
 
       // 1.5. If it is an addition-like expression, then:
       case "Additive": {
-        // TODO: YOUR CODE HERE
+        node = node as Additive;
+
+        let left = this.visit(node.left);
+        let right = this.visit(node.right);
+
+        if (left === right) {
+          return left;
+        }
+        else {
+          throw new Error("The left side and the right side are not the same")
+        }
+
       }
 
       // 1.6. It it is a multiplication-like expression, then:
-      case "Multiplicative": {        
-        // TODO: YOUR CODE HERE
-        
+      case "Multiplicative": {  
+        node = node as Multiplicative;
+
+        let left = this.visit(node.left);
+        let right = this.visit(node.right);
         // 1.6.4. Depending on the operation `op` of the node:
         // 1.6.4.1. If it is `*`, then:
         if (node.op.value === "*") {
-          // 1.6.4.1.1. If the physical quantity of `left` is (???what???) and the physical quantity of `right` is (???what???), or vice versa, then:
-          if ( /** TODO: YOUR CODE HERE **/ ) {
+          // 1.6.4.1.1. If the physical quantity of `left` is Velocity and the physical quantity of `right` is Time, or vice versa, then:
+          if ((left === PhysicalUnitEnum.Velocity && right === PhysicalUnitEnum.Time) || (left === PhysicalUnitEnum.Time && right === PhysicalUnitEnum.Velocity))  {
             // 1.6.4.1.1.1. Return the physical unit representing length.
-            // TODO: YOUR CODE HERE
+            return PhysicalUnitEnum.Distance;
           } else {
             // 1.6.4.1.2. Otherwise, report an error.
             throw new Error(
@@ -76,7 +94,17 @@ export class TypeCheckVisitor implements AbstractVisitor {
           }
         // 1.6.4.2. Otherwise, if it is `/`, then:
         } else if (node.op.value === "/") {
-          // TODO: YOUR CODE HERE
+          if (left === PhysicalUnitEnum.Distance && PhysicalUnitEnum.Time && right.valueOf() > 0) {
+            return PhysicalUnitEnum.Velocity
+          }
+          else {
+            throw new Error(
+              "Incompatible types, " + 
+              left +
+              " cannot be divided by " + 
+              right
+            );
+          }
         }
         // 1.6.4.3. Otherwise, if it any other operator, report an error.
         throw new Error("Failure!");

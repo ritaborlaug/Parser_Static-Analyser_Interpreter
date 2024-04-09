@@ -32,7 +32,7 @@ export class EvaluateVisitor implements AbstractVisitor {
         // 1.1.2. Visit the child `expr` of the node, and store the result in a variable.
         let expr = this.visit(node.expr);
         // 1.1.3. Add a variable and the stored evaluation result to the environment.
-        this.env.declare(node.assignee.name, expr, this.env)
+        this.env.declare(node.assignee.name, expr, this.env);
         // 1.1.4. Return the stored evaluation result.
         return expr;
 
@@ -61,7 +61,7 @@ export class EvaluateVisitor implements AbstractVisitor {
       // 1.4. If it is a measured number, then:
       case "MeasuredNumber":
         // 1.4.1. Cast the node to type `MeasuredNumber`.
-        node = node as MeasuredNumber
+        node = node as MeasuredNumber;
         // 1.4.2. Depending on the physical unit of the node:
         switch (node.unit.value) {
           // 1.4.2.1. If it is grams:
@@ -163,9 +163,9 @@ export class EvaluateVisitor implements AbstractVisitor {
         // 1.5.1. Cast the node to type `Additive`.
         node = node as Additive
         // 1.5.2. Visit the `left` child of this node, and store the result in a variable.
-        let additiveLeft = this.visit(node.left)
+        let additiveLeft = this.visit(node.left);
         // 1.5.3. Visit the `right` child of this node, and store the result in a variable.
-        let additiveRight = this.visit(node.right)
+        let additiveRight = this.visit(node.right);
         // 1.5.4. Depending on the `op` of this node:
         // 1.5.4.1. If it is `+`, then:
         if (node.op.value === "+") {

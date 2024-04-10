@@ -1,6 +1,7 @@
 import { interpret } from "./src/interpreter";
 
 function main() {
+  // I have renamed the last variable to ab) instead of a), so that the output of a) matches the intended output from the solution
   let sample = `
   let a = 10[kg] + 100[g];
   let b = 25[m] + 5[km] + (10[m] + 2[km]);

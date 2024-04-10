@@ -43,7 +43,6 @@ export function parseProgram(tokens: Token[]): AstNode[] {
 
   function peek() {
     // 1. Return the element of array `tokens` at a position immediately after the current position.
-    // TODO: YOUR CODE HERE
     return tokens[currentPosition+1]
   }
 
@@ -211,29 +210,27 @@ export function parseProgram(tokens: Token[]): AstNode[] {
     // 2. Expect an identifier, and store it in a variable.
     let assignee = Identifier();
     // 3. Expect an equality symbol `=`.
-    // TODO: YOUR CODE HERE
     Equals();
     // 4. Expect an expression, and store it in a variable.
-    // TODO: YOUR CODE HERE
     let expr = Expr();
     // 5. Expect a semicolon.
-    // TODO: YOUR CODE HERE
     Semicolon();
     // 6. Return an AST node that represents an assignment statement -- it is an object with:
     return {
       // 6.1. A property that represents the assignee (i.e., the variable that has been assigned to).
-      assignee,
+      assignee: assignee,
       // 6.2. A property that represents the expression on the right-hand side of the assignment statement.
-      expr,
+      expr: expr,
       // 6.3. A property `nodeType` which is 'AssignmentStatement'.
       nodeType: "AssignmentStatement"
     };
   }
 
   function Expr(): Expr {
-    // TODO: YOUR CODE HERE
     return Additive();
   }
+
+
 
   function GroupExpr(): GroupExpr {
     OpeningBracket();
@@ -241,7 +238,7 @@ export function parseProgram(tokens: Token[]): AstNode[] {
     ClosingBracket();
 
     return {
-      subExpr,
+      subExpr: subExpr,
       nodeType: "GroupExpr"
     }
   }
@@ -275,8 +272,8 @@ export function parseProgram(tokens: Token[]): AstNode[] {
     let unit = PhysicalUnit();
     
     return {
-      numericalValue,
-      unit,
+      numericalValue: numericalValue,
+      unit: unit,
       nodeType: "MeasuredNumber"
     }
   }
@@ -328,7 +325,7 @@ export function parseProgram(tokens: Token[]): AstNode[] {
         };
       case "/":
         return {
-          value: "*",
+          value: "/",
           nodeType: "OpMulDiv"
         }
       default:

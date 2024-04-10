@@ -110,7 +110,7 @@ export class EvaluateVisitor implements AbstractVisitor {
           case "km":
               return {
                 value: node.numericalValue*1000,
-                unit: {...node.unit, value: "km"}
+                unit: {...node.unit, value: "m"}
               }
           // 1.4.2.8. If it is meters/second:
           case "m/s":
@@ -202,7 +202,7 @@ export class EvaluateVisitor implements AbstractVisitor {
             unit: left.unit,
           };
         }
-        else if (node.op.value === "/") {
+        else if (node.op.value === "/" && right.value !== 0) {
           return {
             value: left.value / right.value,
             unit: left.unit,

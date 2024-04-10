@@ -1,8 +1,11 @@
 import { interpret } from "./src/interpreter";
 
 function main() {
+  // For some reason a) and aa) below are not evaluated to the same answer even though
+  // the input is the same. I have unfortunately not been able to figure out why 
   let sample = `
   let a = 10[kg] + 100[g];
+  let aa = 10[kg] + 100[g];
   let b = 25[m] + 5[km] + (10[m] + 2[km]);
   let c = 3[km];
   let d = b + c;

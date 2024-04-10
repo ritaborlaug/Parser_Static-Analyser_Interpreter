@@ -94,7 +94,7 @@ export class TypeCheckVisitor implements AbstractVisitor {
           }
         // 1.6.4.2. Otherwise, if it is `/`, then:
         } else if (node.op.value === "/") {
-          if (left === PhysicalUnitEnum.Distance && right === PhysicalUnitEnum.Time) {
+          if ((left === PhysicalUnitEnum.Distance && right === PhysicalUnitEnum.Time) || (left === PhysicalUnitEnum.Time && right === PhysicalUnitEnum.Distance)) {
             return PhysicalUnitEnum.Velocity
           }
           else {
